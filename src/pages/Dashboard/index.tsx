@@ -55,10 +55,11 @@ const Dashboard: React.FC = () => {
         id: editingFood.id,
         available: editingFood.available,
       });
-      const index = foods.findIndex(item => item.id === editingFood.id);
-      const newFoods = [...foods];
-      newFoods[index] = response.data;
-      setFoods(newFoods);
+      setFoods(
+        foods.map(mappedFood =>
+          mappedFood.id === editingFood.id ? { ...response.data } : mappedFood,
+        ),
+      );
     } catch (err) {
       console.log(err);
     }
@@ -88,22 +89,6 @@ const Dashboard: React.FC = () => {
     toggleEditModal();
   }
 
-  async function handleToggleAvailability(food: IFoodPlate): Promise<void> {
-    try {
-      const response = await api.put(`/foods/${food.id}`, {
-        ...food,
-        available: !food.available,
-      });
-
-      const index = foods.findIndex(item => item.id === food.id);
-      const newFoods = [...foods];
-      newFoods[index] = response.data;
-      setFoods(newFoods);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   return (
     <>
       <Header openModal={toggleModal} />
@@ -127,7 +112,6 @@ const Dashboard: React.FC = () => {
               food={food}
               handleDelete={handleDeleteFood}
               handleEditFood={handleEditFood}
-              handleToggleAvailability={handleToggleAvailability}
             />
           ))}
       </FoodsContainer>
